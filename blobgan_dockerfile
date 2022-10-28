@@ -1,0 +1,36 @@
+FROM valeo.ai:cuda11.3-torch1.11.0
+
+COPY id_rsa.pub ./
+RUN cat ./id_rsa.pub >> /root/.ssh/authorized_keys && \
+    rm ./id_rsa.pub
+
+# You can use this file to install stuff in your docker image
+# If you need conda or pip, do something like
+
+# RUN conda install tqdm
+# RUN pip install tqdm
+# RUN sudo apt-get install git
+
+# If you want to add something to the bashrc, just put
+# whatever you want in the file called `bashrc_docker`.
+# This file will be happened to the bashrc in docker.
+
+############# Write custom install code here ##############
+RUN sudo apt install zip
+RUN pip install torchvision
+RUN pip install moviepy lmdb ipdb tqdm==4.64.0 hydra-core==1.1.2 omegaconf==2.1.2 clean-fid==0.1.23 wandb==0.12.11 ipdb==0.13.9 lpips==0.1.4 einops==0.4.1 inputimeout==1.0.4 pytorch-lightning==1.5.10 matplotlib==3.5.2 mpl_interactions[jupyter]==0.21.0
+RUN pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.11.0/index.html
+RUN pip install opencv-python==4.5.5.64 mmdet
+RUN git clone https://github.com/open-mmlab/mmsegmentation.git
+RUN cd mmsegmentation && pip install -v -e .
+RUN wget -q --show-progress https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-linux.zip
+RUN sudo unzip -q ninja-linux.zip -d /usr/local/bin/
+RUN sudo update-alternatives --install /usr/bin/ninja ninja /usr/local/bin/ninja 1 --force
+
+############# Write custom install code here ##############
+
+COPY bashrc_docker.sh ./
+RUN cat ./bashrc_docker.sh >> /root/.bashrc && \
+    rm ./bashrc_docker.sh
+
+COPY execute_post_mount.sh ./
