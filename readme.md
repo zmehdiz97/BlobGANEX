@@ -109,3 +109,6 @@ Semantic segmentation: checkpoints/sem_seg
 Panoptic segmentation: checkpoints/panoptic
 Drivable area segmentation: checkpoints/drivable
 
+
+STEEX
+python generate_counterfactuals.py --dataset_name='bdd' --results_dir='results_counterfactual' --name_exp='rect2' --checkpoints_dir='checkpoints/' --dataroot='/datasets_local/' --aspect_ratio 2 --batchSize=4
